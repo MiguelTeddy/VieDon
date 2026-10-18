@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.NewAlertPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:NewAlertViewModel"
+    Title="Nouvelle alerte">
+
+    <ContentPage.Resources>
+        <DataTemplate x:Key="ChipTemplate" x:DataType="vm:ChipOption">
+            <Button Text="{Binding DisplayText}" Command="{Binding SelectCommand}" IsEnabled="{Binding IsEnabled}"
+                    Style="{StaticResource ChipButton}" FlexLayout.Grow="1" Margin="3,0"
+                    SemanticProperties.Description="{Binding Description}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsEnabled}" Value="False">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TexteSecLight}, Dark={StaticResource TexteSecDark}}" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Groupe du patient puis rhésus (en deux temps) -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Groupe du patient" Style="{StaticResource Legende}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding GroupOptions}"
+                            BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                            Direction="Row" Wrap="NoWrap" JustifyContent="SpaceBetween" />
+                <Label Text="{Binding GroupError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding GroupError.Length}" Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Rhésus" Style="{StaticResource Legende}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding RhesusOptions}"
+                            BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                            Direction="Row" Wrap="NoWrap" JustifyContent="SpaceBetween" />
+                <Label Text="{Binding RhesusError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding RhesusError.Length}" Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <!-- RG2 : même groupe par défaut ; groupes compatibles en option, avec aperçu -->
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" MinimumHeightRequest="48">
+                    <Label Text="Inclure les groupes compatibles" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding IncludeCompatible, Mode=TwoWay}"
+                            SemanticProperties.Description="Inclure les groupes compatibles" />
+                </Grid>
+                <Border Style="{StaticResource Card}" StrokeShape="RoundRectangle 12" Padding="12">
+                    <Label Text="{Binding PreviewText}" Style="{StaticResource Legende}" />
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Nombre de poches -->
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="8">
+                <Label Text="Poches" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="-" Style="{StaticResource ChipButton}" WidthRequest="48" HeightRequest="48"
+                        MinimumHeightRequest="48" Command="{Binding DecreasePouchesCommand}"
+                        SemanticProperties.Description="Moins de poches" />
+                <Label Grid.Column="2" Text="{Binding Pouches}" Style="{StaticResource Section}" VerticalOptions="Center"
+                       HorizontalTextAlignment="Center" WidthRequest="40" />
+                <Button Grid.Column="3" Text="+" Style="{StaticResource ChipButton}" WidthRequest="48" HeightRequest="48"
+                        MinimumHeightRequest="48" Command="{Binding IncreasePouchesCommand}"
+                        SemanticProperties.Description="Plus de poches" />
+            </Grid>
+
+            <!-- RG17 : lieu = établissement de santé ou centre de collecte, jamais une adresse privée -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Établissement de santé (obligatoire)" Style="{StaticResource Legende}" />
+                <Border Style="{StaticResource FieldBorder}">
+                    <Picker Title="Choisir un établissement" ItemsSource="{Binding PlaceNames}"
+                            SelectedIndex="{Binding PlaceIndex, Mode=TwoWay}"
+                            SemanticProperties.Description="Établissement de santé" />
+                </Border>
+                <Label Text="Le rendez-vous a toujours lieu dans un établissement de santé, jamais à une adresse privée."
+                       Style="{StaticResource Legende}" />
+                <Label Text="{Binding PlaceError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding PlaceError.Length}" Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <!-- RG3 : niveau d'urgence ; Critique verrouillé pour les comptes non éligibles (mot affiché) -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Niveau d'urgence" Style="{StaticResource Legende}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding UrgencyOptions}"
+                            BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                            Direction="Row" Wrap="Wrap" JustifyContent="SpaceBetween" />
+                <Label Text="{Binding UrgencyError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding UrgencyError.Length}" Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="{Binding RadiusText}" />
+                <Slider Minimum="1" Maximum="50" Value="{Binding RadiusKm, Mode=TwoWay}"
+                        SemanticProperties.Description="Rayon de recherche en kilomètres" />
+            </VerticalStackLayout>
+
+            <!-- RG18 : aucune donnée d'identité du patient -->
+            <Label Text="i Ne saisis ni nom ni diagnostic du patient : seuls le groupe, le nombre de poches, le lieu et l'urgence sont utiles."
+                   Style="{StaticResource Legende}" />
+
+            <Label Text="{Binding GeneralErrorDisplay}" Style="{StaticResource ErreurLabel}" IsVisible="{Binding HasGeneralError}" />
+            <Button Text="Envoyer l'alerte" Command="{Binding SendCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="Envoi de l'alerte en cours" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

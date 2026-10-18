@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="VieDon.App.Controls.LabeledEntry"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:VieDon.App.Controls">
+
+    <!-- Champ avec libellé visible au-dessus, contour 1 px (2 px + message en cas d'erreur), bouton Afficher / Masquer si mot de passe -->
+    <VerticalStackLayout x:Name="Root" x:DataType="controls:LabeledEntry" Spacing="8">
+        <Label Text="{Binding LabelText}" Style="{StaticResource Legende}" />
+
+        <Border Style="{StaticResource FieldBorder}">
+            <Border.Triggers>
+                <DataTrigger TargetType="Border" Binding="{Binding HasError}" Value="True">
+                    <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                    <Setter Property="StrokeThickness" Value="2" />
+                </DataTrigger>
+            </Border.Triggers>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                <Entry
+                    x:Name="Input"
+                    Text="{Binding Text, Mode=TwoWay}"
+                    Placeholder="{Binding Placeholder}"
+                    Keyboard="{Binding Keyboard}"
+                    IsPassword="{Binding IsHidden}"
+                    ReturnType="{Binding ReturnType}"
+                    Completed="OnInputCompleted"
+                    SemanticProperties.Description="{Binding LabelText}" />
+                <Button
+                    Grid.Column="1"
+                    Text="{Binding ToggleText}"
+                    IsVisible="{Binding ShowToggle}"
+                    Style="{StaticResource TextButton}"
+                    Clicked="OnToggleClicked"
+                    SemanticProperties.Description="Afficher ou masquer le mot de passe" />
+            </Grid>
+        </Border>
+
+        <Label
+            IsVisible="{Binding HasError}"
+            Text="{Binding ErrorDisplay}"
+            Style="{StaticResource ErreurLabel}" />
+    </VerticalStackLayout>
+</ContentView>

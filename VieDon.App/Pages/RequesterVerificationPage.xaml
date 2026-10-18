@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RequesterVerificationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:RequesterVerificationViewModel"
+    Title="Vérification du compte">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Statut : symbole + mot, jamais la couleur seule -->
+            <Border Style="{StaticResource Card}"
+                    Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}"
+                    StrokeThickness="2" IsVisible="{Binding IsPending}">
+                <Label Text="▲ En attente de vérification" Style="{StaticResource Section}" />
+            </Border>
+            <Border Style="{StaticResource Card}"
+                    Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}"
+                    StrokeThickness="2" IsVisible="{Binding IsVerified}">
+                <Label Text="✓ Compte vérifié" Style="{StaticResource Section}" />
+            </Border>
+            <Border Style="{StaticResource Card}"
+                    Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}"
+                    StrokeThickness="2" IsVisible="{Binding IsRejected}">
+                <Label Text="✕ Justificatif refusé" Style="{StaticResource Section}" />
+            </Border>
+
+            <Label Text="{Binding StatusDetail}" />
+
+            <Button Text="Continuer" Command="{Binding ContinueCommand}" IsVisible="{Binding IsVerified}" />
+            <Button Text="Actualiser le statut" Style="{StaticResource SecondaryButton}" Command="{Binding RefreshCommand}" />
+            <Button Text="Contacter le support" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding SupportCommand}" />
+            <Button Text="Retour à l'accueil" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding ContinueCommand}" />
+
+            <!-- DÉVELOPPEMENT UNIQUEMENT : remplace la décision d'une personne -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsDevMode}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Développement : simuler la décision du vérificateur" Style="{StaticResource Legende}" />
+                    <Button Text="Valider le compte" Style="{StaticResource SecondaryButton}" Command="{Binding SimulateApproveCommand}" />
+                    <Button Text="Refuser le compte" Style="{StaticResource SecondaryButton}" Command="{Binding SimulateRejectCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

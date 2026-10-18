@@ -1,0 +1,86 @@
+# VieDon - incrément 3 (cumulatif : remplace les incréments 1 et 2)
+
+Code de l'application réelle (phase 1). Il ne fait pas partie des maquettes de l'activité 5, à dessiner dans Figma.
+
+## Nouveautés de l'incrément 3 : côté demandeur
+- **Écran 19 Inscription demandeur** : individu ou établissement ; pour un établissement : type, nom, adresse,
+  e-mail professionnel, justificatif d'autorisation (sélecteur de fichier), code SMS, consentement non pré-coché.
+- **Écran 20 Vérification du compte** : en attente / vérifié / refusé (symbole + mot). Boutons de SIMULATION de la décision
+  d'un vérificateur, visibles en développement uniquement (compilation Debug).
+- **Écran 21 Accueil demandeur** : bouton Nouvelle alerte (désactivé et expliqué si le compte n'est pas vérifié),
+  indicateurs calculés à partir des alertes de la session (aucun chiffre inventé), liste des alertes, états
+  chargement / erreur / vide, raccourci Valider un don (écran 24 à venir).
+- **Écran 22 Nouvelle alerte** : groupe puis rhésus, option « groupes compatibles » avec aperçu des groupes ciblés,
+  poches, établissement de santé (jamais une adresse privée), niveau d'urgence (Critique verrouillé pour un
+  individu, avec le mot « réservé aux établissements vérifiés »), rayon, aucune donnée du patient.
+- **Règles métier testées** (`AlertPolicy`) : compte vérifié obligatoire, Critique réservé aux établissements vérifiés.
+- **Bout en bout** : une alerte lancée par un demandeur apparaît chez les donneurs ciblés de la même session
+  (utilisez « Se déconnecter (provisoire) » pour changer de compte).
+
+## Nouveautés de l'incrément 2
+- **VieDon.Core** (bibliothèque .NET 8, sans dépendance MAUI) : modèles, validateurs, table de compatibilité des groupes
+  (RG1, RG2, RG11), textes d'affichage. Testable sans émulateur.
+- **VieDon.Core.Tests** (xUnit) : compatibilité (O- donne à tous, rhésus, pas de symétrie, aperçu des groupes ciblés),
+  validation téléphone / e-mail / âge, libellés.
+- **Chemin d'urgence côté donneur** :
+  - Écran 7 Accueil donneur complet : éligibilité indicative, bandeau « Groupe à confirmer », alertes ciblées avec
+    niveau d'urgence en symbole + mot, états chargement / erreur / vide, cas « groupe inconnu ».
+  - Écran 8 Alerte reçue : urgence, groupe, établissement Vérifié / Non vérifié, Accepter / Décliner, états
+    « plus active » et « quota atteint » (liste d'attente).
+  - Écran 9 Confirmation : code à présenter, itinéraire, annulation sans pénalité avec confirmation.
+- Alertes d'exemple en mémoire (InMemoryAlertService) : établissements et chiffres FICTIFS, développement seulement.
+
+## Attention : table de compatibilité
+`CompatibilityTable` porte sur les globules rouges. Elle doit être VALIDÉE par un professionnel de la transfusion avant
+tout usage réel (cahier des charges, RG2). Par défaut, seul le même groupe est ciblé.
+
+## Installation (depuis zéro)
+Prérequis : SDK .NET 8, charge de travail MAUI (`dotnet workload install maui`), Android SDK ou Xcode.
+
+    mkdir VieDon && cd VieDon
+    dotnet new sln -n VieDon
+    dotnet new maui -n VieDon.App -f net8.0
+Puis, depuis ce zip :
+1. Supprimer `VieDon.App/MainPage.xaml` et `MainPage.xaml.cs`.
+2. Copier le dossier `VieDon.App` du zip par-dessus (remplacer les fichiers) ; copier `VieDon.Core` et `VieDon.Core.Tests`.
+3. Si vous aviez installé l'incrément 1 : supprimer `VieDon.App/Models`, `VieDon.App/AppConstants.cs` et
+   `VieDon.App/Services/Validators.cs` (déplacés dans VieDon.Core).
+
+    dotnet sln add VieDon.App/VieDon.App.csproj VieDon.Core/VieDon.Core.csproj VieDon.Core.Tests/VieDon.Core.Tests.csproj
+    dotnet add VieDon.App/VieDon.App.csproj reference VieDon.Core/VieDon.Core.csproj
+    dotnet add VieDon.App/VieDon.App.csproj package CommunityToolkit.Mvvm --version 8.2.2
+    dotnet test VieDon.Core.Tests
+    dotnet build VieDon.App/VieDon.App.csproj -t:Run -f net8.0-android
+
+## Parcours à tester : bout en bout
+1. Créer un compte **Établissement** (justificatif : n'importe quel PDF ou photo) : écran 20 « En attente ». Essayer
+   « Nouvelle alerte » : refusé et expliqué. Revenir à l'écran 20 > « Valider le compte » (simulation).
+2. Nouvelle alerte : groupe O, rhésus +, option compatibles activée (aperçu : O+ et O-), 2 poches, établissement, Critique > Envoyer.
+3. « Se déconnecter (provisoire) », puis créer un compte **Donneur** O+ : l'alerte Critique apparaît sur l'Accueil.
+   Ouvrir > Accepter > code. Reconnecter le compte demandeur : « 1 acceptés » sur la carte.
+4. Compte **Individu** : le niveau Critique est verrouillé (texte « réservé aux établissements vérifiés »).
+
+## Parcours à tester (incrément 2)
+Inscription donneur (code SMS de développement : 123456), puis l'Accueil :
+- donneur O+ : voit l'alerte Critique O+ ; donneur A+ : voit l'alerte Urgente A+ et l'alerte d'un particulier AB+
+  (« Non vérifié », groupes compatibles inclus) ; donneur B- : voit l'alerte Normale B-.
+- Ouvrir une alerte > Accepter : code VD-xxxx. Avec 1 poche demandée, un second compte reçoit « Quota atteint ».
+- « Je ne peux plus venir » : confirmation, retour à l'Accueil, la place est libérée.
+- Essayez le mode sombre, la police agrandie et TalkBack ou VoiceOver.
+
+## Feuille de route des 27 écrans (numéros du cahier)
+| Incrément | Écrans |
+|---|---|
+| 1 (fait) | 1, 2, 6, squelette de 7 |
+| 2 (fait) | 7, 8, 9 |
+| 3 (ce zip) | Demandeur : 19, 20, 21, 22 |
+| 4 | Demandeur : 23, 24, 25, 26, 27 |
+| 5 | Donneur : 10, 11, 12, 13, 14, 15, 18 |
+| 6 | Commun : 3, 4, 5 ; localisation français / anglais |
+| 7 | Donneur : 16, 17 (avantages) ; notifications push et SMS de secours |
+| 8 | Serveur (API), back-office minimal, remplacement des simulateurs |
+
+## Statut de vérification
+Ni le code C# ni les tests n'ont été compilés ni exécutés par leur auteur (pas de SDK .NET dans son environnement) :
+seuls les fichiers XAML ont été vérifiés comme bien formés. Au premier build ou test en échec, copiez les messages
+d'erreur : ils se corrigent vite.

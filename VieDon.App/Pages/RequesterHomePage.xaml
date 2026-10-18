@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RequesterHomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:RequesterHomeViewModel"
+    Title="Accueil"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="{Binding Greeting}" Style="{StaticResource Titre}" />
+                <Border Style="{StaticResource Badge}" IsVisible="{Binding ShowVerifiedBadge}"
+                        Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                    <Label Text="✓ Compte vérifié" FontSize="14"
+                           TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                </Border>
+            </VerticalStackLayout>
+
+            <!-- Compte en attente ou refusé : Nouvelle alerte indisponible, avec explication -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowPendingBanner}"
+                    Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}"
+                    StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="▲ Compte en cours de vérification" FontAttributes="Bold" />
+                    <Label Text="Tu pourras lancer une alerte dès que ton compte sera validé." />
+                    <Button Text="Voir l'état de la vérification" Style="{StaticResource SecondaryButton}" Command="{Binding OpenVerificationCommand}" />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowRejectedBanner}"
+                    Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}"
+                    StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="✕ Justificatif refusé" FontAttributes="Bold" />
+                    <Button Text="Voir le détail" Style="{StaticResource SecondaryButton}" Command="{Binding OpenVerificationCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="+ Nouvelle alerte" Command="{Binding NewAlertCommand}" IsEnabled="{Binding CanCreate}"
+                    SemanticProperties.Hint="Lancer un appel à des donneurs de sang" />
+
+            <!-- Indicateurs (établissements) : calculés à partir de tes alertes -->
+            <VerticalStackLayout Spacing="8" IsVisible="{Binding IsEstablishment}">
+                <Label Text="Cette session" Style="{StaticResource Section}" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Border Style="{StaticResource Card}" Padding="12">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding RequestsText}" Style="{StaticResource Titre}" />
+                            <Label Text="Demandes" Style="{StaticResource Legende}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Card}" Padding="12">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding FilledText}" Style="{StaticResource Titre}" />
+                            <Label Text="Pourvues" Style="{StaticResource Legende}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource Card}" Padding="12">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding SuccessText}" Style="{StaticResource Titre}" />
+                            <Label Text="Réussite" Style="{StaticResource Legende}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+
+            <Label Text="Alertes en cours" Style="{StaticResource Section}" />
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="Chargement de tes alertes" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ErrorDisplay}" Style="{StaticResource ErreurLabel}" />
+                    <Button Text="Réessayer" Style="{StaticResource SecondaryButton}" Command="{Binding LoadCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowEmpty}">
+                <Label Text="Aucune alerte en cours. Lance une nouvelle alerte quand tu cherches un donneur." />
+            </Border>
+
+            <VerticalStackLayout Spacing="16" BindableLayout.ItemsSource="{Binding Alerts}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RequesterAlertItemViewModel">
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="8">
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsCritical}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}">
+                                    <Label Text="! Critique" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsUrgent}"
+                                        Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                                    <Label Text="▲ Urgente" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsNormal}"
+                                        Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                                    <Label Text="i Normale" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                                </Border>
+                                <Label Text="{Binding GroupLine}" Style="{StaticResource Section}" />
+                                <Label Text="{Binding PlaceName}" />
+                                <Label Text="{Binding CountersText}" Style="{StaticResource Legende}" />
+                                <Label Text="{Binding StatusText}" FontAttributes="Bold" />
+                                <Label Text="{Binding AgeText}" Style="{StaticResource Legende}" />
+                                <Button Text="Suivre l'alerte" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding OpenCommand}" SemanticProperties.Description="{Binding ButtonDescription}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <!-- Établissements : raccourci de validation des dons -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsEstablishment}">
+                <Button Text="Valider un don" Style="{StaticResource SecondaryButton}" Command="{Binding ValidateDonationCommand}" />
+            </Border>
+
+            <Button Text="Se déconnecter (provisoire)" Style="{StaticResource TextButton}" HorizontalOptions="Start"
+                    Command="{Binding LogoutCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

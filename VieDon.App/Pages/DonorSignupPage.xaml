@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.DonorSignupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    xmlns:controls="clr-namespace:VieDon.App.Controls"
+    x:DataType="vm:DonorSignupViewModel"
+    Title="Créer mon compte donneur">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Progression -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="{Binding StepLabel}" Style="{StaticResource Legende}" />
+                <ProgressBar Progress="{Binding Progress}" HeightRequest="8"
+                             SemanticProperties.Description="{Binding StepLabel}" />
+            </VerticalStackLayout>
+
+            <!-- ============ ÉTAPE 1 : compte et code SMS ============ -->
+            <VerticalStackLayout Spacing="24" IsVisible="{Binding IsStep1}">
+                <controls:LabeledEntry x:Name="FullNameEntry" LabelText="Nom complet" Text="{Binding FullName, Mode=TwoWay}"
+                                       ErrorText="{Binding FullNameError}" ReturnType="Next" Completed="OnFullNameCompleted" />
+                <controls:LabeledEntry x:Name="PhoneEntry" LabelText="Téléphone" Placeholder="Ex : 6 12 34 56 78" Keyboard="Telephone"
+                                       Text="{Binding Phone, Mode=TwoWay}" ErrorText="{Binding PhoneError}" ReturnType="Next" Completed="OnPhoneCompleted" />
+                <controls:LabeledEntry x:Name="PasswordEntry" LabelText="Mot de passe (8 caractères minimum)" IsPassword="True"
+                                       Text="{Binding Password, Mode=TwoWay}" ErrorText="{Binding PasswordError}" ReturnType="Next" Completed="OnPasswordCompleted" />
+                <controls:LabeledEntry x:Name="ConfirmEntry" LabelText="Confirmer le mot de passe" IsPassword="True"
+                                       Text="{Binding ConfirmPassword, Mode=TwoWay}" ErrorText="{Binding ConfirmPasswordError}" ReturnType="Done" />
+
+                <Button Text="{Binding SendCodeText}" Style="{StaticResource SecondaryButton}" Command="{Binding SendCodeCommand}" />
+
+                <controls:LabeledEntry LabelText="Code reçu par SMS" Keyboard="Numeric" IsVisible="{Binding ShowCodeField}"
+                                       Text="{Binding SmsCode, Mode=TwoWay}" ErrorText="{Binding SmsCodeError}" ReturnType="Done" />
+
+                <Button Text="Continuer" Command="{Binding ContinueCommand}" />
+            </VerticalStackLayout>
+
+            <!-- ============ ÉTAPE 2 : groupe sanguin, zone, consentement ============ -->
+            <VerticalStackLayout Spacing="24" IsVisible="{Binding IsStep2}">
+
+                <!-- Groupe sanguin -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Groupe sanguin" Style="{StaticResource Legende}" />
+                    <FlexLayout BindableLayout.ItemsSource="{Binding GroupOptions}" Direction="Row" Wrap="NoWrap" JustifyContent="SpaceBetween">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ChipOption">
+                                <Button Text="{Binding DisplayText}" Command="{Binding SelectCommand}"
+                                        Style="{StaticResource ChipButton}" FlexLayout.Grow="1" Margin="3,0"
+                                        SemanticProperties.Description="{Binding Description}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                    <Label Text="{Binding GroupError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding GroupError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <!-- Rhésus -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Rhésus" Style="{StaticResource Legende}" />
+                    <FlexLayout BindableLayout.ItemsSource="{Binding RhesusOptions}" Direction="Row" Wrap="NoWrap" JustifyContent="SpaceBetween">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ChipOption">
+                                <Button Text="{Binding DisplayText}" Command="{Binding SelectCommand}"
+                                        Style="{StaticResource ChipButton}" FlexLayout.Grow="1" Margin="3,0"
+                                        SemanticProperties.Description="{Binding Description}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                    <Label Text="{Binding RhesusError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding RhesusError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <!-- Statut du groupe : toujours « Déclaré » à l'inscription (RG8) -->
+                <Border Style="{StaticResource Card}">
+                    <Label Text="Déclaré : ton groupe sera confirmé par un centre de don." Style="{StaticResource Legende}" />
+                </Border>
+
+                <!-- RG11 : je ne connais pas mon groupe -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsRhesusUnknown}">
+                    <Label Text="Pas de souci : un test en centre te donnera ton groupe. Tu restes dans le réseau des donneurs." />
+                </Border>
+
+                <!-- Date de naissance -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Date de naissance" Style="{StaticResource Legende}" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <DatePicker Date="{Binding BirthDate, Mode=TwoWay}" MaximumDate="{x:Static sys:DateTime.Today}"
+                                    SemanticProperties.Description="Date de naissance" />
+                    </Border>
+                    <Label Text="{Binding BirthDateError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding BirthDateError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <controls:LabeledEntry LabelText="Ville ou zone" Text="{Binding City, Mode=TwoWay}"
+                                       ErrorText="{Binding CityError}" ReturnType="Done" />
+
+                <!-- Consentement explicite, non pré-coché (RG23) -->
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                        <CheckBox IsChecked="{Binding AcceptTerms, Mode=TwoWay}" VerticalOptions="Start"
+                                  SemanticProperties.Description="J'accepte les conditions et le traitement de mes données de santé" />
+                        <Label Grid.Column="1" VerticalOptions="Center"
+                               Text="J'accepte les conditions et le traitement de mes données de santé." />
+                    </Grid>
+                    <Button Text="Lire les conditions et la confidentialité" Style="{StaticResource TextButton}"
+                            HorizontalOptions="Start" Command="{Binding OpenTermsCommand}" />
+                    <Label Text="{Binding TermsError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding TermsError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding GeneralErrorDisplay}" Style="{StaticResource ErreurLabel}" IsVisible="{Binding HasGeneralError}" />
+
+                <Button Text="Créer mon compte" Command="{Binding CreateAccountCommand}" />
+                <Button Text="Retour à l'étape 1" Style="{StaticResource TextButton}" Command="{Binding BackCommand}" />
+            </VerticalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="Chargement en cours" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

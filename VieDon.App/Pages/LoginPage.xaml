@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    xmlns:controls="clr-namespace:VieDon.App.Controls"
+    x:DataType="vm:LoginViewModel"
+    Title="Connexion">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Rappel du profil choisi -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Border Style="{StaticResource Card}" StrokeShape="RoundRectangle 24" Padding="16,12" HorizontalOptions="Start">
+                    <Label Text="{Binding SpaceTitle}" FontAttributes="Bold" />
+                </Border>
+                <Button Grid.Column="1" Text="Changer de profil" Style="{StaticResource TextButton}"
+                        Command="{Binding ChangeProfileCommand}" />
+            </Grid>
+
+            <controls:LabeledEntry
+                x:Name="IdentifierEntry"
+                LabelText="Téléphone ou e-mail"
+                Placeholder="Ex : 6 12 34 56 78"
+                Text="{Binding Identifier, Mode=TwoWay}"
+                ReturnType="Next"
+                Completed="OnIdentifierCompleted" />
+
+            <controls:LabeledEntry
+                x:Name="PasswordEntry"
+                LabelText="Mot de passe"
+                IsPassword="True"
+                Text="{Binding Password, Mode=TwoWay}"
+                ReturnType="Done"
+                Completed="OnPasswordCompleted" />
+
+            <!-- Erreur : texte « Erreur : » + message + contour épais, jamais la couleur seule -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorDisplay}" Style="{StaticResource ErreurLabel}"
+                       SemanticProperties.Description="{Binding ErrorDisplay}" />
+            </Border>
+
+            <Button Text="Mot de passe oublié ?" Style="{StaticResource TextButton}"
+                    HorizontalOptions="End" Command="{Binding ForgotPasswordCommand}" />
+
+            <Button Text="Se connecter" Command="{Binding LoginCommand}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="Connexion en cours" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                <Label Text="Pas de compte ?" VerticalOptions="Center" />
+                <Button Text="Créer un compte" Style="{StaticResource TextButton}" Command="{Binding CreateAccountCommand}" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

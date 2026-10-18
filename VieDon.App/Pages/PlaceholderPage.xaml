@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.PlaceholderPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False">
+    <VerticalStackLayout Padding="16" VerticalOptions="Center" Spacing="8">
+        <Label Text="Écran en construction" Style="{StaticResource Titre}" HorizontalTextAlignment="Center" />
+        <Label Text="Cet écran sera ajouté dans une prochaine étape." Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+    </VerticalStackLayout>
+</ContentPage>

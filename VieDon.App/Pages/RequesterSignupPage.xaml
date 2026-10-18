@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RequesterSignupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    xmlns:controls="clr-namespace:VieDon.App.Controls"
+    x:DataType="vm:RequesterSignupViewModel"
+    Title="Créer mon compte demandeur">
+
+    <ContentPage.Resources>
+        <DataTemplate x:Key="ChipTemplate" x:DataType="vm:ChipOption">
+            <Button Text="{Binding DisplayText}" Command="{Binding SelectCommand}"
+                    Style="{StaticResource ChipButton}" FlexLayout.Grow="1" Margin="3,0"
+                    SemanticProperties.Description="{Binding Description}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Tu es" Style="{StaticResource Legende}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding KindOptions}"
+                            BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                            Direction="Row" Wrap="NoWrap" JustifyContent="SpaceBetween" />
+            </VerticalStackLayout>
+
+            <!-- Établissement : type, nom, adresse, e-mail professionnel, justificatif -->
+            <VerticalStackLayout Spacing="24" IsVisible="{Binding IsEstablishment}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Type d'établissement" Style="{StaticResource Legende}" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Picker Title="Choisir un type" ItemsSource="{Binding OrgTypeLabels}"
+                                SelectedIndex="{Binding OrgTypeIndex, Mode=TwoWay}"
+                                SemanticProperties.Description="Type d'établissement" />
+                    </Border>
+                    <Label Text="{Binding OrgTypeError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding OrgTypeError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <controls:LabeledEntry LabelText="Nom de l'établissement" Text="{Binding OrganizationName, Mode=TwoWay}"
+                                       ErrorText="{Binding OrganizationNameError}" ReturnType="Next" />
+                <controls:LabeledEntry LabelText="Adresse de l'établissement" Text="{Binding Address, Mode=TwoWay}"
+                                       ErrorText="{Binding AddressError}" ReturnType="Next" />
+                <controls:LabeledEntry LabelText="E-mail professionnel" Keyboard="Email" Text="{Binding ProfessionalEmail, Mode=TwoWay}"
+                                       ErrorText="{Binding ProfessionalEmailError}" ReturnType="Next" />
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Justificatif d'autorisation" Style="{StaticResource Legende}" />
+                    <Button Text="Ajouter un justificatif (PDF ou photo)" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding PickJustificatifCommand}" />
+                    <Label Text="{Binding JustificatifName, StringFormat='Fichier choisi : {0}'}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding JustificatifName.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Label Text="Ton document est vérifié par une personne puis supprimé : seul le résultat de la vérification est conservé."
+                           Style="{StaticResource Legende}" />
+                    <Label Text="{Binding JustificatifError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding JustificatifError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <controls:LabeledEntry LabelText="{Binding NameLabel}" Text="{Binding FullName, Mode=TwoWay}"
+                                   ErrorText="{Binding FullNameError}" ReturnType="Next" />
+            <controls:LabeledEntry LabelText="Téléphone" Placeholder="Ex : 6 12 34 56 78" Keyboard="Telephone"
+                                   Text="{Binding Phone, Mode=TwoWay}" ErrorText="{Binding PhoneError}" ReturnType="Next" />
+            <controls:LabeledEntry LabelText="Mot de passe (8 caractères minimum)" IsPassword="True"
+                                   Text="{Binding Password, Mode=TwoWay}" ErrorText="{Binding PasswordError}" ReturnType="Next" />
+            <controls:LabeledEntry LabelText="Confirmer le mot de passe" IsPassword="True"
+                                   Text="{Binding ConfirmPassword, Mode=TwoWay}" ErrorText="{Binding ConfirmPasswordError}" ReturnType="Done" />
+
+            <Button Text="{Binding SendCodeText}" Style="{StaticResource SecondaryButton}" Command="{Binding SendCodeCommand}" />
+            <controls:LabeledEntry LabelText="Code reçu par SMS" Keyboard="Numeric" IsVisible="{Binding ShowCodeField}"
+                                   Text="{Binding SmsCode, Mode=TwoWay}" ErrorText="{Binding SmsCodeError}" ReturnType="Done" />
+
+            <!-- Consentement explicite, non pré-coché -->
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <CheckBox IsChecked="{Binding AcceptTerms, Mode=TwoWay}" VerticalOptions="Start"
+                              SemanticProperties.Description="J'accepte les conditions et le traitement de mes données" />
+                    <Label Grid.Column="1" VerticalOptions="Center" Text="J'accepte les conditions et le traitement de mes données." />
+                </Grid>
+                <Button Text="Lire les conditions et la confidentialité" Style="{StaticResource TextButton}"
+                        HorizontalOptions="Start" Command="{Binding OpenTermsCommand}" />
+                <Label Text="{Binding TermsError, StringFormat='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding TermsError.Length}" Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <Label Text="{Binding GeneralErrorDisplay}" Style="{StaticResource ErreurLabel}" IsVisible="{Binding HasGeneralError}" />
+            <Button Text="Créer mon compte" Command="{Binding CreateAccountCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="Chargement en cours" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

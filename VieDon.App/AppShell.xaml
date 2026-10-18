@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="VieDon.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:VieDon.App.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.BackgroundColor="{AppThemeBinding Light={StaticResource FondLight}, Dark={StaticResource FondDark}}"
+    Shell.ForegroundColor="{AppThemeBinding Light={StaticResource TexteLight}, Dark={StaticResource TexteDark}}"
+    Shell.TitleColor="{AppThemeBinding Light={StaticResource TexteLight}, Dark={StaticResource TexteDark}}"
+    Shell.TabBarBackgroundColor="{AppThemeBinding Light={StaticResource FondLight}, Dark={StaticResource FondDark}}"
+    Shell.TabBarForegroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+    Shell.TabBarTitleColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+    Shell.TabBarUnselectedColor="{AppThemeBinding Light={StaticResource TexteSecLight}, Dark={StaticResource TexteSecDark}}">
+
+    <!-- Écran 1 : porte d'entrée -->
+    <ShellContent Route="welcome" Title="Bienvenue" ContentTemplate="{DataTemplate pages:WelcomePage}" />
+
+    <!-- Espace Donneur : 4 onglets (écrans 7, 11, 16, 18). TODO : icônes des onglets. -->
+    <TabBar Route="donor">
+        <ShellContent Route="donor-home" Title="Accueil" ContentTemplate="{DataTemplate pages:DonorHomePage}" />
+        <ShellContent Route="donor-history" Title="Historique" ContentTemplate="{DataTemplate pages:PlaceholderPage}" />
+        <ShellContent Route="donor-benefits" Title="Avantages" ContentTemplate="{DataTemplate pages:PlaceholderPage}" />
+        <ShellContent Route="donor-profile" Title="Profil" ContentTemplate="{DataTemplate pages:PlaceholderPage}" />
+    </TabBar>
+
+    <!-- Espace Demandeur : 3 onglets (écrans 21, 25, 27). -->
+    <TabBar Route="requester">
+        <ShellContent Route="requester-home" Title="Accueil" ContentTemplate="{DataTemplate pages:RequesterHomePage}" />
+        <ShellContent Route="requester-history" Title="Historique" ContentTemplate="{DataTemplate pages:PlaceholderPage}" />
+        <ShellContent Route="requester-profile" Title="Profil" ContentTemplate="{DataTemplate pages:PlaceholderPage}" />
+    </TabBar>
+</Shell>

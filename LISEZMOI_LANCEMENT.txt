@@ -1,0 +1,17 @@
+VIEDON - LANCER L'APPLICATION SUR WINDOWS
+=========================================
+
+1) Extraire le zip (clic droit > Extraire tout). Ne pas lancer depuis l'interieur du zip.
+2) Installer UNE fois le SDK .NET 8 : https://dotnet.microsoft.com/download/dotnet/8.0
+   (Windows 10 version 1809 ou plus recent, ou Windows 11. Pas besoin de Visual Studio.)
+3) Double-clic sur LANCER_VieDon.bat.
+   Le premier lancement telecharge la charge de travail MAUI : 5 a 15 minutes, connexion internet requise.
+   Si Windows demande des droits : clic droit > Executer en tant qu'administrateur.
+4) La fenetre VieDon s'ouvre. Parcours de test : voir LISEZMOI_TECHNIQUE.txt
+   (code SMS de developpement : 123456).
+
+Avec Visual Studio 2022 (option) : ouvrir VieDon.sln, choisir VieDon.App > "Windows Machine", F5.
+Les donnees sont en memoire : tout est perdu a la fermeture (normal en phase de developpement).
+
+ATTENTION : le code n'a jamais ete compile par son auteur. Si une erreur apparait, copiez le texte
+complet dans la conversation : elle sera corrigee.
