@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.AdminPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:AdminViewModel"
+    Title="{loc:Tr 'Administration'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <Label Text="{loc:Tr 'Administration (démonstration)'}" Style="{StaticResource Titre}" />
+            <Label Text="{Binding NoteText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+
+            <Border Style="{StaticResource Card}" Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" StrokeThickness="2">
+                <Label Text="{Binding SummaryText, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement en cours'}" />
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                    <Button Text="{loc:Tr 'Réessayer'}" Style="{StaticResource SecondaryButton}" Command="{Binding LoadCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{loc:Tr 'Donneurs'}" Style="{StaticResource Section}" />
+            <VerticalStackLayout Spacing="16" BindableLayout.ItemsSource="{Binding Donors}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:AdminAccountItem">
+                        <Border Style="{StaticResource Card}" SemanticProperties.Description="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                                <Label Text="{Binding Line1, Converter={x:Static loc:TrConverter.Instance}}" />
+                                <Label Text="{Binding Line2, Converter={x:Static loc:TrConverter.Instance}}" />
+                                <Label Text="{Binding Line3, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="{loc:Tr 'Demandeurs'}" Style="{StaticResource Section}" />
+            <VerticalStackLayout Spacing="16" BindableLayout.ItemsSource="{Binding Requesters}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:AdminAccountItem">
+                        <Border Style="{StaticResource Card}" SemanticProperties.Description="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                                <Label Text="{Binding Line1, Converter={x:Static loc:TrConverter.Instance}}" />
+                                <Label Text="{Binding Line2, Converter={x:Static loc:TrConverter.Instance}}" />
+                                <Label Text="{Binding Line3, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                                <Label Text="{Binding VerificationText, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" IsVisible="{Binding HasVerification}" />
+                                <HorizontalStackLayout Spacing="8" IsVisible="{Binding CanDecide}">
+                                    <Button Text="{loc:Tr 'Valider le compte'}" Style="{StaticResource SecondaryButton}" Command="{Binding ApproveCommand}" />
+                                    <Button Text="{loc:Tr 'Refuser'}" Style="{StaticResource TextButton}" Command="{Binding RejectCommand}" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Button Text="{loc:Tr 'Actualiser'}" Style="{StaticResource SecondaryButton}" Command="{Binding LoadCommand}" />
+            <Button Text="{loc:Tr 'Se déconnecter'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding LogoutCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

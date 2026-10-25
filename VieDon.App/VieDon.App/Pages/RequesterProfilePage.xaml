@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RequesterProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:RequesterProfileViewModel"
+    Title="{loc:Tr 'Profil'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <Label Text="{loc:Tr 'Mon profil'}" Style="{StaticResource Titre}" />
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding DisplayName, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                    <Label Text="{Binding KindText, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <Label Text="{Binding OrgTypeText, Converter={x:Static loc:TrConverter.Instance}}" IsVisible="{Binding HasOrgType}" />
+                    <Label Text="{Binding AddressText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding ResponsibleText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding PhoneText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding StatsText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Statut de vérification : symbole + mot -->
+            <Border Style="{StaticResource Badge}" IsVisible="{Binding IsVerified}" Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                <Label Text="{loc:Tr '✓ Compte vérifié'}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+            </Border>
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsPending}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Tr '▲ Compte non vérifié : en attente de vérification'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                    <Button Text="{loc:Tr 'Voir l’état de la vérification'}" Style="{StaticResource SecondaryButton}" Command="{Binding OpenVerificationCommand}" />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsRejected}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Tr '✕ Vérification refusée'}" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                    <Button Text="{loc:Tr 'Voir le détail'}" Style="{StaticResource SecondaryButton}" Command="{Binding OpenVerificationCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="0">
+                <Button Text="{loc:Tr 'Abonnement et facturation'}" Style="{StaticResource TextButton}" HorizontalOptions="Start"
+                        IsVisible="{Binding IsEstablishment}" Command="{Binding SubscriptionCommand}" />
+                <Button Text="{loc:Tr 'Aide, conditions et confidentialité'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding HelpCommand}" />
+                <Button Text="{loc:Tr 'Passer à l’espace Donneur'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding SwitchSpaceCommand}" />
+            </VerticalStackLayout>
+
+            <Label Text="{loc:Tr 'La gestion des utilisateurs d’un établissement est prévue en phase 2.'}" Style="{StaticResource Legende}"
+                   IsVisible="{Binding IsEstablishment}" />
+
+            <Button Text="{loc:Tr 'Se déconnecter'}" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            <Button Text="{loc:Tr 'Supprimer mon compte et mes données'}" Style="{StaticResource TextButton}" HorizontalOptions="Start"
+                    TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" Command="{Binding DeleteAccountCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

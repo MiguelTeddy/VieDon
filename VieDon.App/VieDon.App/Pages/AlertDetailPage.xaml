@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.AlertDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:AlertDetailViewModel"
+    Title="{loc:Tr 'Alerte'}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="16">
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement de l’alerte'}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource ErreurLabel}" />
+            </Border>
+
+            <!-- États : alerte expirée, pourvue ou annulée / quota atteint -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsInactive}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding InactiveText, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <Button Text="{loc:Tr 'Retour à l’accueil'}" Style="{StaticResource SecondaryButton}" Command="{Binding BackHomeCommand}" />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsWaiting}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding WaitingText, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <Button Text="{loc:Tr 'Retour à l’accueil'}" Style="{StaticResource SecondaryButton}" Command="{Binding BackHomeCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="16" IsVisible="{Binding HasAlert}">
+
+                <!-- Bande d'urgence : symbole + mot -->
+                <Border StrokeShape="RoundRectangle 12" Padding="16" IsVisible="{Binding IsCritical}"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+                        StrokeThickness="0">
+                    <Label Text="{loc:Tr '! CRITIQUE - Besoin urgent'}" Style="{StaticResource Section}"
+                           TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                </Border>
+                <Border StrokeShape="RoundRectangle 12" Padding="16" IsVisible="{Binding IsUrgent}" StrokeThickness="2"
+                        Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                    <Label Text="{loc:Tr '▲ URGENTE - Besoin rapide'}" Style="{StaticResource Section}"
+                           TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                </Border>
+                <Border StrokeShape="RoundRectangle 12" Padding="16" IsVisible="{Binding IsNormal}" StrokeThickness="2"
+                        Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                    <Label Text="{loc:Tr 'i NORMALE - Besoin planifié'}" Style="{StaticResource Section}"
+                           TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                </Border>
+
+                <!-- Groupe recherché et poches -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{loc:Tr 'Groupe recherché'}" Style="{StaticResource Legende}" />
+                        <Label Text="{Binding GroupText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Display}" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="{Binding PouchesText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Titre}" VerticalOptions="Center" />
+                </Grid>
+
+                <!-- Établissement -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding EstablishmentName, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Border Style="{StaticResource Badge}" IsVisible="{Binding IsVerified}"
+                                Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                            <Label Text="{loc:Tr '✓ Vérifié'}" FontSize="14"
+                                   TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                        </Border>
+                        <Border Style="{StaticResource Badge}" IsVisible="{Binding IsNotVerified}"
+                                Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                            <Label Text="{loc:Tr '▲ Non vérifié'}" FontSize="14"
+                                   TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                        </Border>
+                        <Button Text="{loc:Tr 'Voir la fiche'}" Style="{StaticResource TextButton}" Command="{Binding ShowEstablishmentCommand}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Infos -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding DistanceText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding AgeText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding ZoneText, Converter={x:Static loc:TrConverter.Instance}}" />
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource Card}" StrokeShape="RoundRectangle 12">
+                    <Label Text="{Binding ReminderText, Converter={x:Static loc:TrConverter.Instance}, ConverterParameter='i {0}'}" Style="{StaticResource Legende}" />
+                </Border>
+
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource ErreurLabel}" />
+                </Border>
+
+                <!-- Deux actions suffisent : Accepter ou Décliner -->
+                <VerticalStackLayout Spacing="16" IsVisible="{Binding ShowActions}">
+                    <Button Text="{loc:Tr 'Accepter'}" Command="{Binding AcceptCommand}" />
+                    <Button Text="{loc:Tr 'Décliner'}" Style="{StaticResource SecondaryButton}" Command="{Binding DeclineCommand}" />
+                </VerticalStackLayout>
+
+                <Button Text="{loc:Tr 'Signaler cette alerte'}" Style="{StaticResource TextButton}" HorizontalOptions="Start"
+                        Command="{Binding ReportCommand}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

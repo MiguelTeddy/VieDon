@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.ValidateDonationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    xmlns:controls="clr-namespace:VieDon.App.Controls"
+    x:DataType="vm:ValidateDonationViewModel"
+    Title="{loc:Tr 'Valider un don'}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <Label Text="{loc:Tr 'Saisis le code présenté par le donneur à son arrivée.'}" />
+
+            <controls:LabeledEntry
+                LabelText="{loc:Tr 'Code du donneur'}"
+                Placeholder="{loc:Tr 'Exemple : VD-1234'}"
+                Text="{Binding Code, Mode=TwoWay}"
+                ErrorText="{Binding CodeError}"
+                ReturnType="Done" />
+
+            <Button Text="{loc:Tr 'Valider le don'}" Command="{Binding ValidateCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="{loc:Tr 'Validation en cours'}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowSuccess}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ResultTitle, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" TextColor="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" />
+                    <Label Text="{Binding ResultDetail, Converter={x:Static loc:TrConverter.Instance}}" />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowWarning}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ResultTitle, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                    <Label Text="{Binding ResultDetail, Converter={x:Static loc:TrConverter.Instance}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding RulesText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsDevMode}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{loc:Tr 'Développement'}" FontAttributes="Bold" />
+                    <Label Text="{Binding DevHint, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="{loc:Tr 'Retour à l’accueil'}" Style="{StaticResource TextButton}" Command="{Binding BackCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

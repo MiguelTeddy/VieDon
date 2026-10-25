@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.DonorHistoryPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:DonorHistoryViewModel"
+    Title="{loc:Tr 'Historique'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <Label Text="{loc:Tr 'Historique de dons'}" Style="{StaticResource Titre}" />
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Border Style="{StaticResource Card}" Padding="12" SemanticProperties.Description="{loc:Tr 'Dons validés'}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding TotalCount, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Titre}" />
+                        <Label Text="{loc:Tr 'Dons validés'}" Style="{StaticResource Legende}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}" Padding="12" SemanticProperties.Description="{loc:Tr 'Présences confirmées'}">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding PresencesCount, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Titre}" />
+                        <Label Text="{loc:Tr 'Présences confirmées'}" Style="{StaticResource Legende}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="12" SemanticProperties.Description="{loc:Tr 'Niveau'}">
+                    <VerticalStackLayout>
+                        <Image Source="{Binding MedalImage}" HeightRequest="40" WidthRequest="34" HorizontalOptions="Start"
+                               AutomationProperties.IsInAccessibleTree="False" />
+                        <Label Text="{Binding LevelName, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Titre}" />
+                        <Label Text="{loc:Tr 'Niveau'}" Style="{StaticResource Legende}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border Style="{StaticResource Card}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" StrokeThickness="2">
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding CanDonate}" Value="False">
+                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <Label Text="{Binding NextText, Converter={x:Static loc:TrConverter.Instance}}" />
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement en cours'}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                    <Button Text="{loc:Tr 'Réessayer'}" Style="{StaticResource SecondaryButton}" Command="{Binding LoadCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- État vide : aucun don, invitation à trouver un centre -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowEmpty}">
+                <VerticalStackLayout Spacing="8">
+                    <Image Source="icon_drop.png" WidthRequest="40" HeightRequest="40" HorizontalOptions="Start" AutomationProperties.IsInAccessibleTree="False" />
+                    <Label Text="{loc:Tr 'Aucun don pour l’instant'}" FontAttributes="Bold" />
+                    <Label Text="{loc:Tr 'Ton premier don validé apparaîtra ici. Tu peux trouver un centre de collecte près de toi.'}" Style="{StaticResource Legende}" />
+                    <Button Text="{loc:Tr 'Trouver un centre de collecte'}" Style="{StaticResource SecondaryButton}" Command="{Binding FindCentresCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="16" BindableLayout.ItemsSource="{Binding Items}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:DonationItemViewModel">
+                        <Border Style="{StaticResource Card}" SemanticProperties.Description="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}">
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="{Binding DateText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                                <Label Text="{Binding PlaceText, Converter={x:Static loc:TrConverter.Instance}}" />
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsValidated}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsPending}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsAttended}" Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="{loc:Tr 'Seuls les dons validés par un centre sont comptabilisés (niveau et avantages).'}" Style="{StaticResource Legende}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

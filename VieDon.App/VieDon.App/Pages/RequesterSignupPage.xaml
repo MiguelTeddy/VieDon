@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RequesterSignupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    xmlns:controls="clr-namespace:VieDon.App.Controls"
+    x:DataType="vm:RequesterSignupViewModel"
+    Title="{loc:Tr 'Créer mon compte demandeur'}">
+
+    <ContentPage.Resources>
+        <DataTemplate x:Key="ChipTemplate" x:DataType="vm:ChipOption">
+            <Button Text="{Binding DisplayText, Converter={x:Static loc:TrConverter.Instance}}" Command="{Binding SelectCommand}"
+                    Style="{StaticResource ChipButton}" FlexLayout.Grow="1" Margin="3,0"
+                    SemanticProperties.Description="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsSelected}" Value="True">
+                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="{loc:Tr 'Tu es'}" Style="{StaticResource Legende}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding KindOptions}"
+                            BindableLayout.ItemTemplate="{StaticResource ChipTemplate}"
+                            Direction="Row" Wrap="NoWrap" JustifyContent="SpaceBetween" />
+                <Label Text="{loc:Tr 'Individu : tu cherches du sang pour un proche. Établissement : hôpital, clinique, centre de santé…'}" Style="{StaticResource Legende}" />
+            </VerticalStackLayout>
+
+            <!-- Établissement : type, nom, adresse, e-mail professionnel, justificatif -->
+            <VerticalStackLayout Spacing="24" IsVisible="{Binding IsEstablishment}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Tr 'Type d’établissement'}" Style="{StaticResource Legende}" />
+                    <Border Style="{StaticResource FieldBorder}">
+                        <Picker Title="{loc:Tr 'Choisir un type'}" ItemsSource="{Binding OrgTypeLabels}"
+                                SelectedIndex="{Binding OrgTypeIndex, Mode=TwoWay}"
+                                SemanticProperties.Description="{loc:Tr 'Type d’établissement'}" />
+                    </Border>
+                    <Label Text="{Binding OrgTypeError, Converter={x:Static loc:TrConverter.Instance}, ConverterParameter='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding OrgTypeError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+
+                <controls:LabeledEntry LabelText="{loc:Tr 'Nom de l’établissement'}" Text="{Binding OrganizationName, Mode=TwoWay}"
+                                       ErrorText="{Binding OrganizationNameError}" ReturnType="Next" />
+                <controls:LabeledEntry LabelText="{loc:Tr 'Adresse de l’établissement'}" Text="{Binding Address, Mode=TwoWay}"
+                                       ErrorText="{Binding AddressError}" ReturnType="Next" />
+                <controls:LabeledEntry LabelText="{loc:Tr 'E-mail professionnel'}" Keyboard="Email" Text="{Binding ProfessionalEmail, Mode=TwoWay}"
+                                       ErrorText="{Binding ProfessionalEmailError}" ReturnType="Next" />
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Tr 'Justificatif d’autorisation'}" Style="{StaticResource Legende}" />
+                    <Button Text="{loc:Tr 'Ajouter un justificatif (PDF ou photo)'}" Style="{StaticResource SecondaryButton}"
+                            Command="{Binding PickJustificatifCommand}" />
+                    <Label Text="{Binding JustificatifName, Converter={x:Static loc:TrConverter.Instance}, ConverterParameter='Fichier choisi : {0}'}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding JustificatifName.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Label Text="{loc:Tr 'Ton document est vérifié par une personne puis supprimé : seul le résultat de la vérification est conservé.'}"
+                           Style="{StaticResource Legende}" />
+                    <Label Text="{Binding JustificatifError, Converter={x:Static loc:TrConverter.Instance}, ConverterParameter='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label" Binding="{Binding JustificatifError.Length}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <controls:LabeledEntry LabelText="{Binding NameLabel, Converter={x:Static loc:TrConverter.Instance}}" Text="{Binding FullName, Mode=TwoWay}"
+                                   ErrorText="{Binding FullNameError}" ReturnType="Next" />
+            <controls:LabeledEntry LabelText="{loc:Tr 'Téléphone'}" Placeholder="{loc:Tr 'Ex : 6 12 34 56 78'}" Keyboard="Telephone"
+                                   Text="{Binding Phone, Mode=TwoWay}" ErrorText="{Binding PhoneError}" ReturnType="Next" />
+            <controls:LabeledEntry LabelText="{loc:Tr 'Mot de passe (8 caractères minimum)'}" IsPassword="True"
+                                   Text="{Binding Password, Mode=TwoWay}" ErrorText="{Binding PasswordError}" ReturnType="Next" />
+            <controls:LabeledEntry LabelText="{loc:Tr 'Confirmer le mot de passe'}" IsPassword="True"
+                                   Text="{Binding ConfirmPassword, Mode=TwoWay}" ErrorText="{Binding ConfirmPasswordError}" ReturnType="Done" />
+
+            <Button Text="{Binding SendCodeText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource SecondaryButton}" Command="{Binding SendCodeCommand}" />
+            <controls:LabeledEntry LabelText="{loc:Tr 'Code reçu par SMS'}" Keyboard="Numeric" IsVisible="{Binding ShowCodeField}"
+                                   Text="{Binding SmsCode, Mode=TwoWay}" ErrorText="{Binding SmsCodeError}" ReturnType="Done" />
+
+            <!-- Consentement explicite, non pré-coché -->
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <CheckBox IsChecked="{Binding AcceptTerms, Mode=TwoWay}" VerticalOptions="Start"
+                              SemanticProperties.Description="{loc:Tr 'J’accepte les conditions et le traitement de mes données'}" />
+                    <Label Grid.Column="1" VerticalOptions="Center" Text="{loc:Tr 'J’accepte les conditions et le traitement de mes données.'}" />
+                </Grid>
+                <Button Text="{loc:Tr 'Lire les conditions et la confidentialité'}" Style="{StaticResource TextButton}"
+                        HorizontalOptions="Start" Command="{Binding OpenTermsCommand}" />
+                <Label Text="{Binding TermsError, Converter={x:Static loc:TrConverter.Instance}, ConverterParameter='Erreur : {0}'}" Style="{StaticResource ErreurLabel}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding TermsError.Length}" Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </VerticalStackLayout>
+
+            <Label Text="{Binding GeneralErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource ErreurLabel}" IsVisible="{Binding HasGeneralError}" />
+            <Button Text="{loc:Tr 'Créer mon compte'}" Command="{Binding CreateAccountCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement en cours'}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

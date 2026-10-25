@@ -1,0 +1,46 @@
+VIEDON SUR TELEPHONE ANDROID (depuis Visual Studio 2022 Community)
+==================================================================
+
+SI L'EMULATEUR NE S'OUVRE PAS : 3 ALTERNATIVES (de la plus simple a la plus longue)
+ 1) SUR LE PC, FORMAT TELEPHONE : double-clic sur LANCER_VieDon.bat (ou dans Visual Studio, choisir
+    "Windows Machine" a la place de l'emulateur). L'application s'ouvre dans une fenetre de la taille d'un telephone.
+ 2) VRAI TELEPHONE EN USB : voir la partie B, option 1. Aucune virtualisation necessaire.
+ 3) FICHIER APK : double-clic sur CREER_APK.bat. Il cree un fichier "...-Signed.apk" a copier sur le telephone
+    (cable, Bluetooth, WhatsApp, Telegram) puis a ouvrir pour l'installer. Autoriser "installer des applications
+    inconnues" pour l'application utilisee (Fichiers, Chrome...) quand le telephone le demande.
+
+IMPORTANT : placer le dossier hors de OneDrive et avec un chemin court, par exemple C:\VieDon.
+OneDrive bloque les fichiers de compilation Android (erreur "acces refuse").
+
+A. INSTALLER LES OUTILS (une seule fois)
+ 1. Ouvrir "Visual Studio Installer" > Modifier > cocher "Developpement d'applications mobiles avec .NET MAUI".
+    Cela installe le SDK Android, Java et l'emulateur. Prevoir plusieurs Go de telechargement (Wi-Fi conseille).
+ 2. Pour l'EMULATEUR seulement : Windows > "Activer ou desactiver des fonctionnalites Windows" > cocher
+    "Plateforme de l'hyperviseur Windows" et "Plateforme de machine virtuelle", puis redemarrer le PC.
+
+B. CHOISIR OU LANCER L'APPLICATION
+ Option 1 - Vrai telephone (le plus simple, aucune virtualisation) :
+   - Sur le telephone : Parametres > A propos du telephone > appuyer 7 fois sur "Numero de build".
+   - Parametres > Options pour les developpeurs > activer "Debogage USB".
+   - Brancher le telephone au PC avec un cable qui transmet les donnees. Accepter "Autoriser le debogage USB".
+ Option 2 - Emulateur :
+   - Visual Studio > Outils > Android > Android Device Manager > Nouveau.
+   - Choisir par exemple "Pixel 5" avec Android 14 (API 34), puis Creer, puis Demarrer.
+
+C. LANCER
+ 1. Ouvrir VieDon.sln. VieDon.App doit etre en gras (projet de demarrage).
+ 2. Barre d'outils : configuration "Debug", "Any CPU".
+ 3. Ouvrir la liste a cote du bouton vert et choisir votre telephone ou votre emulateur (sous "Android...").
+    Si l'appareil n'apparait pas : debrancher/rebrancher, changer de cable, ou attendre 30 secondes.
+ 4. Appuyer sur F5. Le premier lancement est long (compilation Android + installation, plusieurs minutes).
+ 5. L'application VieDon s'ouvre sur le telephone. Connexion : liste "Comptes de demonstration"
+    (voir COMPTES_DEMO.txt, admin@viedon.test / Admin1234 pour l'administrateur).
+
+D. SANS VISUAL STUDIO (option)
+   Double-clic sur LANCER_ANDROID.bat avec un telephone branche ou un emulateur demarre.
+
+NOTES
+ - L'application fonctionne sans internet une fois installee : les donnees sont des exemples en memoire.
+ - Les donnees reviennent a l'etat d'origine chaque fois que l'application est fermee puis relancee.
+ - Si Visual Studio signale "workload manquante" : refaire l'etape A.1.
+ - Si une erreur de compilation apparait, copiez le texte de l'onglet "Liste d'erreurs" dans la conversation.

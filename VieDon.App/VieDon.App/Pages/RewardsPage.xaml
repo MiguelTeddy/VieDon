@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RewardsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:RewardsViewModel"
+    Title="{loc:Tr 'Avantages'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <Label Text="{loc:Tr 'Avantages et niveaux'}" Style="{StaticResource Titre}" />
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement en cours'}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                    <Button Text="{loc:Tr 'Réessayer'}" Style="{StaticResource SecondaryButton}" Command="{Binding LoadCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Carte de donneur numérique -->
+            <Border Style="{StaticResource Card}" Stroke="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" StrokeThickness="2"
+                    SemanticProperties.Description="{loc:Tr 'Carte de donneur numérique'}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{loc:Tr 'Carte de donneur VieDon'}" Style="{StaticResource Legende}" />
+                    <Label Text="{Binding CardName, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Titre}" />
+                    <Label Text="{Binding CardGroup, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding CardLevel, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" TextColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                    <Label Text="{Binding CardNumber, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                </VerticalStackLayout>
+                <Image Grid.Column="1" Source="{Binding CardMedal}" WidthRequest="76" HeightRequest="91" VerticalOptions="Center"
+                       SemanticProperties.Description="{Binding CardLevel, Converter={x:Static loc:TrConverter.Instance}}" />
+            </Grid>
+            </Border>
+
+            <!-- Niveau actuel et progression -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding LevelLine, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                    <ProgressBar Progress="{Binding Progress}" HeightRequest="8"
+                                 SemanticProperties.Description="{Binding ProgressText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding ProgressText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Parcours des niveaux : médailles Bronze, Argent, Or, Platine -->
+            <VerticalStackLayout Spacing="8">
+                <Label Text="{loc:Tr 'Parcours des niveaux'}" Style="{StaticResource Section}" />
+                <FlexLayout Direction="Row" JustifyContent="SpaceBetween" BindableLayout.ItemsSource="{Binding LevelSteps}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:MedalStepViewModel">
+                            <Border StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="2,8" WidthRequest="78" BackgroundColor="Transparent"
+                                    SemanticProperties.Description="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsCurrent}" Value="True">
+                                        <Setter Property="StrokeThickness" Value="2" />
+                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <VerticalStackLayout Spacing="2">
+                                    <Image Source="{Binding Image}" WidthRequest="52" HeightRequest="62" HorizontalOptions="Center" />
+                                    <Label Text="{Binding Name, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding ThresholdText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding StateText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+            </VerticalStackLayout>
+
+            <!-- État vide : aucun avantage débloqué, prochain palier affiché -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowNoneUnlocked}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" StrokeThickness="2">
+                <Label Text="{Binding NoneUnlockedText, Converter={x:Static loc:TrConverter.Instance}}" />
+            </Border>
+
+            <VerticalStackLayout Spacing="8">
+                <HorizontalStackLayout Spacing="8">
+                    <Image Source="medal_gold.png" WidthRequest="22" HeightRequest="26" VerticalOptions="Center" AutomationProperties.IsInAccessibleTree="False" />
+                    <Label Text="{loc:Tr 'Mes badges'}" Style="{StaticResource Section}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <FlexLayout Wrap="Wrap" Direction="Row" JustifyContent="Start" BindableLayout.ItemsSource="{Binding Badges}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:BadgeItemViewModel">
+                            <Grid Margin="0,0,8,8" SemanticProperties.Description="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}">
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsEarned}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}">
+                                    <Label Text="{Binding EarnedText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsLocked}" Stroke="{AppThemeBinding Light={StaticResource TexteSecLight}, Dark={StaticResource TexteSecDark}}">
+                                    <Label Text="{Binding LockedText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource TexteSecLight}, Dark={StaticResource TexteSecDark}}" />
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Spacing="8">
+                <Image Source="icon_gift.png" WidthRequest="26" HeightRequest="26" VerticalOptions="Center" AutomationProperties.IsInAccessibleTree="False" />
+                <Label Text="{loc:Tr 'Avantages partenaires'}" Style="{StaticResource Section}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Label Text="{Binding RulesText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+
+            <VerticalStackLayout Spacing="16" BindableLayout.ItemsSource="{Binding Rewards}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RewardItemViewModel">
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="8">
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsAvailable}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsUsed}" Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsLocked}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsExpired}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}">
+                                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                                </Border>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                    <Image Source="{Binding MedalImage}" WidthRequest="46" HeightRequest="55" VerticalOptions="Start"
+                                           AutomationProperties.IsInAccessibleTree="False" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                        <Label Text="{Binding Title, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                                        <Label Text="{Binding Partner, Converter={x:Static loc:TrConverter.Instance}}" />
+                                        <Label Text="{Binding RequiredText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                                        <Label Text="{Binding ValidityText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                                <Button Text="{loc:Tr 'Voir le détail'}" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding OpenCommand}" SemanticProperties.Description="{Binding ButtonDescription, Converter={x:Static loc:TrConverter.Instance}}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

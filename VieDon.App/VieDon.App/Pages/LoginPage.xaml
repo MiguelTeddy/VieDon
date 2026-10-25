@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    xmlns:controls="clr-namespace:VieDon.App.Controls"
+    x:DataType="vm:LoginViewModel"
+    Title="{loc:Tr 'Connexion'}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Rappel du profil choisi -->
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Border Style="{StaticResource Card}" StrokeShape="RoundRectangle 24" Padding="16,12" HorizontalOptions="Start">
+                    <Label Text="{Binding SpaceTitle, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                </Border>
+                <Button Grid.Column="1" Text="{loc:Tr 'Changer de profil'}" Style="{StaticResource TextButton}"
+                        Command="{Binding ChangeProfileCommand}" />
+            </Grid>
+
+            <controls:LabeledEntry
+                x:Name="IdentifierEntry"
+                LabelText="{loc:Tr 'Téléphone ou e-mail'}"
+                Placeholder="{loc:Tr 'Ex : 6 12 34 56 78'}"
+                Text="{Binding Identifier, Mode=TwoWay}"
+                ReturnType="Next"
+                Completed="OnIdentifierCompleted" />
+
+            <controls:LabeledEntry
+                x:Name="PasswordEntry"
+                LabelText="{loc:Tr 'Mot de passe'}"
+                IsPassword="True"
+                Text="{Binding Password, Mode=TwoWay}"
+                ReturnType="Done"
+                Completed="OnPasswordCompleted" />
+
+            <!-- Erreur : texte « Erreur : » + message + contour épais, jamais la couleur seule -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource ErreurLabel}"
+                       SemanticProperties.Description="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" />
+            </Border>
+
+            <Button Text="{loc:Tr 'Mot de passe oublié ?'}" Style="{StaticResource TextButton}"
+                    HorizontalOptions="End" Command="{Binding ForgotPasswordCommand}" />
+
+            <Button Text="{loc:Tr 'Se connecter'}" Command="{Binding LoginCommand}" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                               SemanticProperties.Description="{loc:Tr 'Connexion en cours'}" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                <Label Text="{loc:Tr 'Pas de compte ?'}" VerticalOptions="Center" />
+                <Button Text="{loc:Tr 'Créer un compte'}" Style="{StaticResource TextButton}" Command="{Binding CreateAccountCommand}" />
+            </HorizontalStackLayout>
+
+            <!-- DÉVELOPPEMENT : comptes d'exemple avec dons, avantages et alertes (Debug seulement) -->
+            <VerticalStackLayout Spacing="12" IsVisible="{Binding IsDevMode}">
+                <Label Text="{loc:Tr 'Comptes de démonstration'}" Style="{StaticResource Section}" />
+                <Label Text="{Binding DemoPasswordText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding DemoAccounts}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DemoAccountItem">
+                            <Border Style="{StaticResource Card}">
+                                <VerticalStackLayout Spacing="8">
+                                    <Label Text="{Binding Title, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                                    <Label Text="{Binding Subtitle, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                                    <Button Text="{loc:Tr 'Se connecter avec ce compte'}" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding UseCommand}"
+                                            SemanticProperties.Description="{Binding ButtonDescription, Converter={x:Static loc:TrConverter.Instance}}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.ParticipationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:ParticipationViewModel"
+    Title="{loc:Tr 'Ton rendez-vous'}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="16">
+
+            <Border Style="{StaticResource Card}"
+                    Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}"
+                    StrokeThickness="2">
+                <Label Text="{loc:Tr '✓ Merci ! Ta venue est confirmée'}" Style="{StaticResource Section}" />
+            </Border>
+
+            <Label Text="{Binding ErrorMessage, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource ErreurLabel}" />
+
+            <VerticalStackLayout Spacing="16" IsVisible="{Binding IsLoaded}">
+
+                <!-- Code à présenter au centre (le QR code sera ajouté avec une bibliothèque dédiée) -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                        <Label Text="{loc:Tr 'Ton code'}" Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Code, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Display}" HorizontalTextAlignment="Center"
+                               SemanticProperties.Description="{Binding Code, Converter={x:Static loc:TrConverter.Instance}, ConverterParameter='Ton code : {0}'}" />
+                        <Label Text="{Binding CodeHint, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding EstablishmentName, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <Label Text="{Binding Address, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                </VerticalStackLayout>
+                <Label Text="{Binding DeadlineText, Converter={x:Static loc:TrConverter.Instance}}" />
+                <Label Text="{Binding ContactText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+
+                <Button Text="{loc:Tr 'Itinéraire'}" Command="{Binding DirectionsCommand}" />
+                <Button Text="{loc:Tr 'Je ne peux plus venir'}" Style="{StaticResource TextButton}"
+                        TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}"
+                        Command="{Binding CancelParticipationCommand}" />
+            </VerticalStackLayout>
+
+            <Button Text="{loc:Tr 'Retour à l’accueil'}" Style="{StaticResource TextButton}" Command="{Binding BackHomeCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

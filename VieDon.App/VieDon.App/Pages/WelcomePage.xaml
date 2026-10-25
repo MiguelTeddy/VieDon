@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.WelcomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:WelcomeViewModel"
+    Title="{loc:Tr 'Bienvenue'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Choix de la langue (localisation à brancher) -->
+            <HorizontalStackLayout HorizontalOptions="End" Spacing="8">
+                <Button Text="{loc:Tr 'Français'}" Style="{StaticResource ChipButton}" WidthRequest="104" HeightRequest="48" MinimumHeightRequest="48"
+                        Command="{Binding SetLanguageCommand}" CommandParameter="fr"
+                        SemanticProperties.Description="{loc:Tr 'Choisir le français'}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedLanguage}" Value="fr">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+                <Button Text="{loc:Tr 'English'}" Style="{StaticResource ChipButton}" WidthRequest="104" HeightRequest="48" MinimumHeightRequest="48"
+                        Command="{Binding SetLanguageCommand}" CommandParameter="en"
+                        SemanticProperties.Description="{loc:Tr 'Choose English'}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding SelectedLanguage}" Value="en">
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </HorizontalStackLayout>
+
+            <!-- Illustration d'accueil + nom -->
+            <VerticalStackLayout Spacing="0" Margin="0,8,0,0">
+                <Image Source="welcome_hero.png" HeightRequest="170" HorizontalOptions="Center" Aspect="AspectFit"
+                       AutomationProperties.IsInAccessibleTree="False" />
+                <Label Text="VieDon" Style="{StaticResource Display}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <Label Text="{loc:Tr 'Un donneur compatible, près de toi, en quelques minutes.'}"
+                   Style="{StaticResource Titre}" HorizontalTextAlignment="Center" />
+
+            <!-- Trois promesses -->
+            <VerticalStackLayout Spacing="16">
+                <Grid ColumnDefinitions="32,*" ColumnSpacing="8">
+                    <Image Source="icon_heart.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Start" AutomationProperties.IsInAccessibleTree="False" />
+                    <Label Grid.Column="1" Text="{loc:Tr 'Don volontaire et gratuit'}" />
+                </Grid>
+                <Grid ColumnDefinitions="32,*" ColumnSpacing="8">
+                    <Image Source="icon_hospital.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Start" AutomationProperties.IsInAccessibleTree="False" />
+                    <Label Grid.Column="1" Text="{loc:Tr 'Aucune décision médicale prise par l’appli'}" />
+                </Grid>
+                <Grid ColumnDefinitions="32,*" ColumnSpacing="8">
+                    <Image Source="icon_shield.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Start" AutomationProperties.IsInAccessibleTree="False" />
+                    <Label Grid.Column="1" Text="{loc:Tr 'Aucun nom ni diagnostic du patient'}" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="16" Margin="0,16,0,0">
+                <Button Text="{loc:Tr 'Je veux donner mon sang'}" Command="{Binding ChooseDonorCommand}" />
+                <Button Text="{loc:Tr 'Je cherche un donneur'}" Style="{StaticResource SecondaryButton}" Command="{Binding ChooseRequesterCommand}" />
+                <Button Text="{loc:Tr 'J’ai déjà un compte'}" Style="{StaticResource TextButton}" Command="{Binding HaveAccountCommand}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

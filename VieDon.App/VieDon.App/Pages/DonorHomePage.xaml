@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.DonorHomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:DonorHomeViewModel"
+    Title="{loc:Tr 'Accueil'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <!-- Bandeau d'accueil : avatar, salutation, médaille -->
+            <Border StrokeThickness="0" StrokeShape="RoundRectangle 24" Padding="20" BackgroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <Image Grid.ColumnSpan="3" Source="icon_drop_white.png" Opacity="0.12" WidthRequest="130" HeightRequest="130"
+                           HorizontalOptions="End" VerticalOptions="End" Margin="0,0,-30,-48" InputTransparent="True"
+                           AutomationProperties.IsInAccessibleTree="False" />
+                    <Border WidthRequest="56" HeightRequest="56" StrokeThickness="0" StrokeShape="RoundRectangle 28"
+                            BackgroundColor="#33FFFFFF" VerticalOptions="Center" AutomationProperties.IsInAccessibleTree="False">
+                        <Label Text="{Binding Initials}" FontSize="22" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+            <Label Text="{Binding Greeting, Converter={x:Static loc:TrConverter.Instance}}" FontSize="22" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+            <Label Text="{Binding GroupSummary, Converter={x:Static loc:TrConverter.Instance}}" IsVisible="{Binding ShowGroupLine}" TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" Opacity="0.92" />
+                    </VerticalStackLayout>
+            <Image Grid.Column="2" Source="{Binding MedalImage}" WidthRequest="46" HeightRequest="55" VerticalOptions="Center"
+                   SemanticProperties.Description="{Binding LevelText, Converter={x:Static loc:TrConverter.Instance}}" />
+                </Grid>
+            </Border>
+
+            <!-- Éligibilité (indicative) et niveau : vert si le don est possible, orange sinon (toujours avec symbole + mot) -->
+            <Border Style="{StaticResource Card}"
+                    Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}"
+                    StrokeThickness="2">
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{Binding CanDonate}" Value="False">
+                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding EligibilityText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                    <Label Text="{Binding EligibilityHint, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                    <Label Text="{Binding LevelText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                    <ProgressBar Progress="{Binding LevelProgress}" HeightRequest="8"
+                                 SemanticProperties.Description="{Binding LevelText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding PendingText, Converter={x:Static loc:TrConverter.Instance}}" IsVisible="{Binding HasPending}"
+                           TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Donneur indisponible : aucune alerte reçue (réglage dans l'onglet Profil) -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowUnavailableBanner}"
+                    Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}"
+                    StrokeThickness="2">
+                <Label Text="{loc:Tr '▲ Tu es indisponible : tu ne reçois pas d’alertes. Change ce réglage dans l’onglet Profil.'}" />
+            </Border>
+
+            <!-- Groupe déclaré : à confirmer (RG8) -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowConfirmBanner}"
+                    Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}"
+                    StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding GroupSummary, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <Label Text="{loc:Tr '▲ Groupe à confirmer : seul un centre de don peut le confirmer.'}"
+                           TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                    <Button Text="{loc:Tr 'Confirmer mon groupe'}" Style="{StaticResource SecondaryButton}" Command="{Binding ConfirmGroupCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- RG11 : je ne connais pas mon groupe -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowUnknownGroupHint}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Tr 'Groupe à déterminer'}" FontAttributes="Bold" />
+                    <Label Text="{loc:Tr 'Tu restes dans le réseau. Fais-toi typer dans un centre pour recevoir les alertes de ton groupe.'}" />
+                    <Button Text="{loc:Tr 'Trouver un centre de collecte'}" Style="{StaticResource SecondaryButton}" Command="{Binding FindCentresCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <HorizontalStackLayout Spacing="8">
+                <Image Source="icon_bell.png" WidthRequest="26" HeightRequest="26" VerticalOptions="Center" AutomationProperties.IsInAccessibleTree="False" />
+                <Label Text="{loc:Tr 'Alertes près de toi'}" Style="{StaticResource Section}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement des alertes'}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource ErreurLabel}" />
+                    <Button Text="{loc:Tr 'Réessayer'}" Style="{StaticResource SecondaryButton}" Command="{Binding LoadCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding ShowEmpty}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Tr 'Aucune alerte dans ta zone pour le moment.'}" />
+                    <Button Text="{loc:Tr 'Modifier ma zone'}" Style="{StaticResource SecondaryButton}" Command="{Binding ChangeZoneCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Cartes d'alerte -->
+            <VerticalStackLayout Spacing="16" BindableLayout.ItemsSource="{Binding Alerts}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:AlertItemViewModel">
+                        <Border Style="{StaticResource Card}">
+                            <VerticalStackLayout Spacing="8">
+                                <!-- Niveau d'urgence : symbole + mot -->
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsCritical}"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+                                        Stroke="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}">
+                                    <Label Text="{loc:Tr '! Critique'}" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsUrgent}"
+                                        Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                                    <Label Text="{loc:Tr '▲ Urgente'}" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                                </Border>
+                                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsNormal}"
+                                        Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                                    <Label Text="{loc:Tr 'i Normale'}" FontSize="14" FontAttributes="Bold"
+                                           TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                                </Border>
+
+                                <Label Text="{Binding GroupLine, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding EstablishmentName, Converter={x:Static loc:TrConverter.Instance}}" VerticalOptions="Center" />
+                                    <Border Style="{StaticResource Badge}" IsVisible="{Binding IsVerified}"
+                                            Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                                        <Label Text="{loc:Tr '✓ Vérifié'}" FontSize="14"
+                                               TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                                    </Border>
+                                    <Border Style="{StaticResource Badge}" IsVisible="{Binding IsNotVerified}"
+                                            Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                                        <Label Text="{loc:Tr '▲ Non vérifié'}" FontSize="14"
+                                               TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                                    </Border>
+                                </HorizontalStackLayout>
+
+                                <Label Text="{Binding InfoLine, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+
+                                <Button Text="{loc:Tr 'Voir et répondre'}" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding OpenCommand}"
+                                        SemanticProperties.Description="{Binding ButtonDescription, Converter={x:Static loc:TrConverter.Instance}}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Button Text="{loc:Tr 'Trouver un centre de collecte'}" Style="{StaticResource TextButton}"
+                    HorizontalOptions="Start" Command="{Binding FindCentresCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

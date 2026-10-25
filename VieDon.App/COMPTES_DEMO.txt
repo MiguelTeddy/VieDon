@@ -1,0 +1,38 @@
+COMPTES DE DEMONSTRATION VIEDON (donnees FICTIVES, en memoire)
+================================================================
+Mot de passe de TOUS les comptes donneurs et demandeurs : Demo1234
+Sur l'ecran Connexion, une liste "Comptes de demonstration" permet de se connecter en un clic
+(visible en mode Debug uniquement).
+
+ADMINISTRATEUR (voit tous les comptes)
+  Identifiant : admin@viedon.test     Mot de passe : Admin1234
+  Affiche les donneurs (groupe, dons, niveau, presences, disponibilite) et les demandeurs (type, alertes,
+  statut de verification). Il peut Valider ou Refuser un etablissement en attente (ex. Association Entraide Exemple).
+  Il n'existe qu'en mode Debug : il disparait de la version finale.
+
+DONNEURS
+  Aminata Nkoulou   699000001   O+ confirme    Niveau OR       7 dons valides   (prochain niveau : Platine)
+  Marc Tchoumi      699000002   O- confirme    Niveau PLATINE  10 dons valides  (tous les avantages)
+  Jean-Paul Essomba 699000003   A- confirme    Niveau ARGENT   3 dons valides + 1 presence sans don
+  Fatou Diallo      699000004   AB+ confirme   Niveau BRONZE   1 don valide
+  Nadia Bello       699000005   O+ declare     AUCUN don       (pour tester le premier don)
+
+DEMANDEURS
+  Hopital Central          699100001  Etablissement verifie  1 alerte en cours + 6 alertes passees ; peut valider les dons
+  Clinique du Centre       699100002  Etablissement verifie  1 alerte en cours + 2 alertes passees
+  Paul Mbarga              699100003  Individu               1 alerte en cours + 2 alertes passees (Critique verrouille)
+  Association Entraide Ex. 699100004  Etablissement EN ATTENTE de verification
+
+PARCOURS A ESSAYER
+  1) Connexion Aminata > onglets Historique (7 dons), Avantages (carte, niveau Or, badges, avantages), Profil.
+     Avantages > ouvrir "Reduction sur les produits de bien-etre" > Utiliser > un code AV-xxxx s'affiche.
+  2) Connexion Marc > niveau Platine, tous les avantages ; son dernier don date de 20 jours : "Pas encore", prochain don affiche.
+  3) Connexion Nadia (0 don) > Historique vide, Avantages : "prochain palier Bronze".
+     Accepter l'alerte Critique O+ > noter le code VD-xxxx > Profil > Se deconnecter.
+     Connexion Hopital Central > Accueil > "Valider un don" > saisir le code.
+     Reconnexion Nadia : 1 don valide, niveau BRONZE, groupe CONFIRME, premier avantage debloque.
+  4) Hopital Central > onglet Historique : filtre Toutes / Pourvues / Expirees / Annulees.
+  5) Connexion admin > Association Entraide Exemple > Valider le compte > reconnexion avec ce compte : compte verifie.
+  6) Profil (donneur ou demandeur) : "Passer a l'espace ..." et "Supprimer mon compte".
+
+Les donnees reviennent a leur etat d'origine a chaque lancement de l'application.

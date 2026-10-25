@@ -1,0 +1,31 @@
+VIEDON - LANCER L'APPLICATION SUR WINDOWS
+=========================================
+
+1) Extraire le zip (clic droit > Extraire tout). Ne pas lancer depuis l'interieur du zip.
+2) Avoir un SDK .NET 8 ou plus recent (le SDK 9 fonctionne aussi) : https://dotnet.microsoft.com/download/dotnet/8.0
+   (Windows 10 version 1809 ou plus recent, ou Windows 11.)
+3) Double-clic sur LANCER_VieDon.bat.
+   Le premier lancement telecharge la charge de travail MAUI et les paquets NuGet (1 a 2 Go, internet requis).
+   Si Windows demande des droits : clic droit > Executer en tant qu'administrateur.
+4) Sur l'ecran Connexion, utilisez la liste "Comptes de demonstration" (mot de passe Demo1234).
+   Voir COMPTES_DEMO.txt pour les comptes, leurs dons, leurs avantages et les parcours a essayer.
+
+TELEPHONE ANDROID : voir LISEZMOI_ANDROID.txt (telephone en debogage USB ou emulateur, depuis Visual Studio).
+ADMINISTRATEUR : sur l'ecran Connexion, compte "Administrateur" (admin@viedon.test / Admin1234) pour voir tous les comptes.
+
+Avec Visual Studio 2022 : ouvrir VieDon.sln. VieDon.App est le projet de demarrage ; choisir "Windows Machine", puis F5.
+Les donnees sont en memoire : tout revient a l'etat d'origine a la fermeture (normal en phase de developpement).
+
+LANGUE : l'ecran Bienvenue propose Francais / English. Le choix est enregistre et toute l'application est traduite
+(les textes absents du dictionnaire restent en francais). THEME : blanc impose.
+IMAGES : medailles, icones et illustrations en SVG dans VieDon.App/Resources/Images.
+
+ECRANS PRESENTS (numeros du cahier) : 1 Bienvenue, 2 Connexion, 6 Inscription donneur, 7 Accueil donneur, 8 Alerte,
+9 Confirmation, 11 Historique de dons, 16 Avantages et niveaux, 17 Detail d'un avantage, 18 Profil donneur,
+19 Inscription demandeur, 20 Verification, 21 Accueil demandeur, 22 Nouvelle alerte, 24 Valider un don,
+25 Historique des alertes, 27 Profil demandeur.
+PAS ENCORE FAITS : 3, 4, 5 (aide), 10, 12 (confirmer le groupe), 13 (centres), 14, 15, 23 (suivi d'alerte), 26 (abonnement).
+Ils affichent un message d'information.
+
+ATTENTION : le code n'a jamais ete compile par son auteur. Si une erreur apparait, copiez le texte
+complet dans la conversation : elle sera corrigee.

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="240" viewBox="0 0 200 240" version="1.1">
+  <defs>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#6C86A6"/></linearGradient>
+    <linearGradient id="disc" x1="0.15" y1="0" x2="0.85" y2="1"><stop offset="0" stop-color="#EAF2FB"/><stop offset="1" stop-color="#9DB5D1"/></linearGradient>
+    <linearGradient id="st" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+    <linearGradient id="rb1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E53935"/><stop offset="1" stop-color="#B71C1C"/></linearGradient>
+    <linearGradient id="rb2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C62828"/><stop offset="1" stop-color="#8E1B1B"/></linearGradient>
+  </defs>
+  <ellipse cx="100" cy="226" rx="52" ry="7" fill="#000000" opacity="0.12"/>
+  <polygon points="58,0 96,0 128,100 90,108" fill="url(#rb1)"/>
+  <polygon points="142,0 104,0 72,100 110,108" fill="url(#rb2)"/>
+  <polygon points="74,0 82,0 112,102 104,104" fill="#FFFFFF" opacity="0.35"/>
+  <polygon points="126,0 118,0 88,102 96,104" fill="#FFFFFF" opacity="0.25"/>
+  <circle cx="100" cy="150" r="68" fill="url(#rim)"/>
+  <circle cx="100" cy="150" r="68" fill="none" stroke="#6C86A6" stroke-width="2"/>
+  <circle cx="100" cy="150" r="56" fill="url(#disc)" stroke="#6C86A6" stroke-width="1.5"/>
+  <circle cx="100" cy="150" r="48" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="3 5" opacity="0.9"/>
+  <polygon points="100,112 128,142 100,190 72,142" fill="url(#st)" stroke="#4F6A8C" stroke-width="2" stroke-linejoin="round"/><polygon points="100,112 114,142 100,142" fill="#FFFFFF" opacity="0.65"/><polygon points="100,112 86,142 100,142" fill="#FFFFFF" opacity="0.35"/><polygon points="72,142 128,142 100,190" fill="#4F6A8C" opacity="0.18"/>
+  <path d="M52 128 A56 56 0 0 1 100 94" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" opacity="0.45"/>
+</svg>

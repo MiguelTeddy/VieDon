@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.DonorProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:DonorProfileViewModel"
+    Title="{loc:Tr 'Profil'}"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="24">
+
+            <Label Text="{loc:Tr 'Mon profil'}" Style="{StaticResource Titre}" />
+
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                    <Border WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 30" VerticalOptions="Start"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}" AutomationProperties.IsInAccessibleTree="False">
+                        <Label Text="{Binding Initials}" FontSize="24" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SurAccentLight}, Dark={StaticResource SurAccentDark}}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                    <Label Text="{Binding FullName, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Section}" />
+                    <Label Text="{Binding GroupLine, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                    <Label Text="{Binding ZoneText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding PhoneText, Converter={x:Static loc:TrConverter.Instance}}" />
+                    <Label Text="{Binding PresencesText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                    <Label Text="{Binding LevelText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                </VerticalStackLayout>
+                    <Image Grid.Column="2" Source="{Binding MedalImage}" WidthRequest="46" HeightRequest="55" VerticalOptions="Start"
+                           SemanticProperties.Description="{Binding LevelText, Converter={x:Static loc:TrConverter.Instance}}" />
+                </Grid>
+            </Border>
+
+            <!-- Interrupteur de disponibilité -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <Label Text="{loc:Tr 'Je suis disponible pour donner'}" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding IsAvailable, Mode=TwoWay}"
+                                SemanticProperties.Description="{loc:Tr 'Disponibilité pour recevoir des alertes'}" />
+                    </Grid>
+                    <Label Text="{Binding AvailabilityText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                    <ActivityIndicator IsRunning="{Binding IsSaving}" IsVisible="{Binding IsSaving}"
+                                       SemanticProperties.Description="{loc:Tr 'Enregistrement en cours'}" HeightRequest="24" />
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" IsVisible="{Binding HasError}" Style="{StaticResource ErreurLabel}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding PrivacyText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+
+            <VerticalStackLayout Spacing="0">
+                <Button Text="{loc:Tr 'Confirmer mon groupe'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding ConfirmGroupCommand}" />
+                <Button Text="{loc:Tr 'Zone et géolocalisation'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding ZoneCommand}" />
+                <Button Text="{loc:Tr 'Notifications et rappels'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding NotificationsCommand}" />
+                <Button Text="{loc:Tr 'Aide, conditions et confidentialité'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding HelpCommand}" />
+                <Button Text="{loc:Tr 'Passer à l’espace Demandeur'}" Style="{StaticResource TextButton}" HorizontalOptions="Start" Command="{Binding SwitchSpaceCommand}" />
+            </VerticalStackLayout>
+
+            <Button Text="{loc:Tr 'Se déconnecter'}" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            <Button Text="{loc:Tr 'Supprimer mon compte et mes données'}" Style="{StaticResource TextButton}" HorizontalOptions="Start"
+                    TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" Command="{Binding DeleteAccountCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

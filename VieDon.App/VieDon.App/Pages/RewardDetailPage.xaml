@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VieDon.App.Pages.RewardDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:vm="clr-namespace:VieDon.App.ViewModels"
+    x:DataType="vm:RewardDetailViewModel"
+    Title="{loc:Tr 'Avantage'}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16,16,16,24" Spacing="16">
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
+                               SemanticProperties.Description="{loc:Tr 'Chargement en cours'}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding HasError}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" StrokeThickness="2">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding ErrorDisplay, Converter={x:Static loc:TrConverter.Instance}}" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                    <Button Text="{loc:Tr 'Retour'}" Style="{StaticResource SecondaryButton}" Command="{Binding BackCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Spacing="16" IsVisible="{Binding IsLoaded}">
+
+                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsAvailable}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}">
+                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" />
+                </Border>
+                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsUsed}" Stroke="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}">
+                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource SecondaireLight}, Dark={StaticResource SecondaireDark}}" />
+                </Border>
+                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsLocked}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}">
+                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" />
+                </Border>
+                <Border Style="{StaticResource Badge}" IsVisible="{Binding IsExpired}" Stroke="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}">
+                    <Label Text="{Binding StatusText, Converter={x:Static loc:TrConverter.Instance}}" FontSize="14" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource ErreurLight}, Dark={StaticResource ErreurDark}}" />
+                </Border>
+
+                <Label Text="{Binding Title, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Titre}" />
+                <Label Text="{Binding Partner, Converter={x:Static loc:TrConverter.Instance}}" FontAttributes="Bold" />
+                <Label Text="{Binding Description, Converter={x:Static loc:TrConverter.Instance}}" />
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{loc:Tr 'Conditions'}" Style="{StaticResource Section}" />
+                        <Label Text="{Binding Conditions, Converter={x:Static loc:TrConverter.Instance}}" />
+                        <Label Text="{Binding RequiredText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                        <Label Text="{Binding ValidityText, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Avantage verrouillé : niveau insuffisant -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsLocked}" Stroke="{AppThemeBinding Light={StaticResource AvertissementLight}, Dark={StaticResource AvertissementDark}}" StrokeThickness="2">
+                    <Label Text="{Binding LockedHint, Converter={x:Static loc:TrConverter.Instance}}" />
+                </Border>
+
+                <!-- Code à présenter (après utilisation) -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasCode}" Stroke="{AppThemeBinding Light={StaticResource SuccesLight}, Dark={StaticResource SuccesDark}}" StrokeThickness="2"
+                        SemanticProperties.Description="{loc:Tr 'Code de l’avantage'}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{loc:Tr 'Ton code'}" Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Code, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Display}" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding CodeHint, Converter={x:Static loc:TrConverter.Instance}}" Style="{StaticResource Legende}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="{loc:Tr 'Utiliser cet avantage'}" Command="{Binding UseCommand}" IsVisible="{Binding IsAvailable}" />
+                <Button Text="{loc:Tr 'Retour aux avantages'}" Style="{StaticResource TextButton}" Command="{Binding BackCommand}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="VieDon.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:loc="clr-namespace:VieDon.App.Localization"
+    xmlns:pages="clr-namespace:VieDon.App.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.BackgroundColor="{AppThemeBinding Light={StaticResource FondLight}, Dark={StaticResource FondDark}}"
+    Shell.ForegroundColor="{AppThemeBinding Light={StaticResource TexteLight}, Dark={StaticResource TexteDark}}"
+    Shell.TitleColor="{AppThemeBinding Light={StaticResource TexteLight}, Dark={StaticResource TexteDark}}"
+    Shell.TabBarBackgroundColor="{AppThemeBinding Light={StaticResource FondLight}, Dark={StaticResource FondDark}}"
+    Shell.TabBarForegroundColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+    Shell.TabBarTitleColor="{AppThemeBinding Light={StaticResource PrimaireLight}, Dark={StaticResource PrimaireDark}}"
+    Shell.TabBarUnselectedColor="{AppThemeBinding Light={StaticResource TexteSecLight}, Dark={StaticResource TexteSecDark}}">
+
+    <!-- Écran 1 : porte d'entrée -->
+    <ShellContent Route="welcome" Title="{loc:Tr 'Bienvenue'}" ContentTemplate="{DataTemplate pages:WelcomePage}" />
+
+    <!-- DÉVELOPPEMENT : administration de démonstration (liste des comptes). -->
+    <ShellContent Route="admin" Title="{loc:Tr 'Administration'}" ContentTemplate="{DataTemplate pages:AdminPage}" />
+
+    <!-- Espace Donneur : 4 onglets (écrans 7, 11, 16, 18). -->
+    <TabBar Route="donor">
+        <ShellContent Route="donor-home" Icon="tab_home.png" Title="{loc:Tr 'Accueil'}" ContentTemplate="{DataTemplate pages:DonorHomePage}" />
+        <ShellContent Route="donor-history" Icon="tab_history.png" Title="{loc:Tr 'Historique'}" ContentTemplate="{DataTemplate pages:DonorHistoryPage}" />
+        <ShellContent Route="donor-benefits" Icon="tab_benefits.png" Title="{loc:Tr 'Avantages'}" ContentTemplate="{DataTemplate pages:RewardsPage}" />
+        <ShellContent Route="donor-profile" Icon="tab_profile.png" Title="{loc:Tr 'Profil'}" ContentTemplate="{DataTemplate pages:DonorProfilePage}" />
+    </TabBar>
+
+    <!-- Espace Demandeur : 3 onglets (écrans 21, 25, 27). -->
+    <TabBar Route="requester">
+        <ShellContent Route="requester-home" Icon="tab_home.png" Title="{loc:Tr 'Accueil'}" ContentTemplate="{DataTemplate pages:RequesterHomePage}" />
+        <ShellContent Route="requester-history" Icon="tab_history.png" Title="{loc:Tr 'Historique'}" ContentTemplate="{DataTemplate pages:RequesterHistoryPage}" />
+        <ShellContent Route="requester-profile" Icon="tab_profile.png" Title="{loc:Tr 'Profil'}" ContentTemplate="{DataTemplate pages:RequesterProfilePage}" />
+    </TabBar>
+</Shell>
